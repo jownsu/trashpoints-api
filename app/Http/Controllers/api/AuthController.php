@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\auth\ChangePasswordRequest;
 use App\Http\Requests\auth\LoginRequest;
 use App\Http\Requests\auth\RegisterRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -29,8 +31,9 @@ class AuthController extends Controller
 
 
         $token = $user->createToken('TrashPointsToken')->plainTextToken;
+        $userData = new UserResource($user);
 
-        return response()->success(['user' => $user,'token' => $token], 201);
+        return response()->success(['user' => $userData,'token' => $token, 'message' => 'Logged In'], 201);
     }
 
     public function login(LoginRequest $request){
@@ -44,9 +47,26 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken('TrashPointsToken')->plainTextToken;
+//        $userData = new UserResource($user);
 
-        return response()->success(['email' => $user->email, 'token' => $token, 'message' => 'Logged In'], 201);
+        return response()->success(['user' => $user->id, 'token' => $token, 'message' => 'Logged In'], 201);
 
+    }
+
+    public function changePassword(ChangePasswordRequest $request){
+        $input = $request->validated();
+
+        $user = auth()->user();
+
+        if(!Hash::check($input['current_password'],$user->password)){
+            return response()->error("Wrong Password");
+        }
+
+        $user->password = bcrypt($input['new_password']);
+
+        $user->save();
+
+        return response()->success(['message' => "Password Changed"]);
     }
 
     public function logout(Request $request){

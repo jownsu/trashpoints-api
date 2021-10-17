@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\api\AuthController;
+use App\Http\Controllers\api\MeController;
 use App\Http\Controllers\api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,10 +22,10 @@ use Illuminate\Support\Facades\Route;
 //});
 
 Route::group(['middleware' => ['auth:sanctum']], function(){
+    Route::post('/changepassword', [AuthController::class, 'changePassword']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::apiResource('/users', UserController::class)->only(['index', 'show']);
-
-    Route::get('/me', [UserController::class, 'me']);
+    Route::apiResource('/users', UserController::class)->only(['index', 'show', 'update']);
+    Route::apiResource('/me', MeController::class)->only(['index']);
 } );
 
 //public routes
