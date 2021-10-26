@@ -23,6 +23,7 @@ class CreateProfilesTable extends Migration
             $table->string('lastname');
             $table->string('address');
             $table->string('contact_no');
+            $table->string('avatar')->nullable();
             $table->float('balance')->default(0.0);
             $table->timestamps();
         });

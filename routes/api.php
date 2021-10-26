@@ -26,6 +26,8 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::apiResource('/users', UserController::class)->only(['index', 'show', 'update']);
     Route::apiResource('/me', MeController::class)->only(['index']);
+
+    Route::put('/uploadavatar', [MeController::class, 'uploadavatar']);
 } );
 
 //public routes
