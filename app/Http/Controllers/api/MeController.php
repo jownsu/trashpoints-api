@@ -16,9 +16,9 @@ class MeController extends Controller
      */
     public function index()
     {
-        $id = auth()->id();
-
-        return redirect('api/users/'.$id);
+        $user = auth()->user();
+        $data = new UserResource($user);
+        return response()->success($data);
     }
 
     public function uploadavatar(Request $request)

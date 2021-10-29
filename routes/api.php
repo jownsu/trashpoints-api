@@ -25,7 +25,7 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::post('/changepassword', [AuthController::class, 'changePassword']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::apiResource('/users', UserController::class)->only(['index', 'show', 'update']);
-    Route::apiResource('/me', MeController::class)->only(['index']);
+    Route::apiResource('/me', MeController::class)->only(['index', 'update']);
 
     Route::put('/uploadavatar', [MeController::class, 'uploadavatar']);
 } );

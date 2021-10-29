@@ -11,13 +11,16 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
+use Haruncpi\LaravelIdGenerator\IdGenerator;
+
 class AuthController extends Controller
 {
     public function register(RegisterRequest $request){
         $input = $request->validated();
 
         $user = User::create([
-            'email' => $input['email'],
+            'id'       => IdGenerator::generate(['table' => 'users', 'length' => 11, 'prefix' => date('Yis')]),
+            'email'    => $input['email'],
             'password' => bcrypt($input['password'])
         ]);
 
