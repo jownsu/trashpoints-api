@@ -29,7 +29,6 @@ class ProfileFactory extends Factory
             'lastname'   => $this->faker->lastName(),
             'contact_no' => $this->faker->e164PhoneNumber(),
             'address'    => $this->faker->address(),
-            'balance'    => $this->faker->numberBetween(0, 100)
         ];
     }
 }

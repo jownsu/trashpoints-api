@@ -4,11 +4,14 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\me\MeUpdateRequest;
+use App\Http\Requests\UploadAvatarRequest;
 use App\Http\Resources\UserResource;
+use App\Models\Profile;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class MeController extends Controller
+class MeController extends ApiController
 {
     /**
      * Display a listing of the resource.
@@ -21,20 +24,19 @@ class MeController extends Controller
         return response()->success($data);
     }
 
-    public function uploadavatar(Request $request)
+    public function uploadavatar(UploadAvatarRequest $request)
     {
+        $input = $request->validated();
+
         $user = auth()->user();
 
         $userProfile = $user->profile;
 
-        if($request->hasFile('avatar')){
-            Storage::delete($user->profile->avatar);
+        Storage::delete($user->profile->avatar);
+        $userProfile->avatar = $input['avatar']->store(Profile::AVATARS_IMG_PATH);
+        $userProfile->save();
 
-            $userProfile->avatar = $request->avatar->store('');
-            $userProfile->save();
-        }
-
-        return response()->success('Avatar Updated');
+        return response( )->success('Avatar Updated');
     }
 
 }

@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Hash;
 
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 
-class AuthController extends Controller
+class AuthController extends ApiController
 {
     public function register(RegisterRequest $request){
         $input = $request->validated();
@@ -32,6 +32,9 @@ class AuthController extends Controller
             'contact_no'         => $input['contact_no'],
         ]);
 
+        $user->wallet()->create([
+            'balance' => 0.0
+        ]);
 
         $token = $user->createToken('TrashPointsToken')->plainTextToken;
         $userData = new UserResource($user);
