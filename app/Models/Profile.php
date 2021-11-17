@@ -36,4 +36,15 @@ class Profile extends Model
     public function user(){
         return $this->belongsTo(User::class);
     }
+
+    //my functions
+
+    public function fullname()
+    {
+        $fullname = $this->firstname . " " .
+            ($this->middlename ? $this->middlename . " " : '') .
+            $this->lastname;
+
+        return $fullname;
+    }
 }

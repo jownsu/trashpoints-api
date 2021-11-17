@@ -19,9 +19,10 @@ class AuthController extends ApiController
         $input = $request->validated();
 
         $user = User::create([
-            'id'       => IdGenerator::generate(['table' => 'users', 'length' => 11, 'prefix' => date('Yis')]),
+            //'id'       => IdGenerator::generate(['table' => 'users', 'length' => 11, 'prefix' => date('Yis')]),
             'email'    => $input['email'],
-            'password' => bcrypt($input['password'])
+            'password' => bcrypt($input['password']),
+            'is_admin' => false
         ]);
 
         $user->profile()->create([
@@ -49,7 +50,7 @@ class AuthController extends ApiController
 
         if(!$user || !Hash::check($input['password'] ,$user->password)){
 
-            return response()->error('Incorrect Email/Password', 401);
+            return response()->error('Incorrect Email/Password');
         }
 
         $token = $user->createToken('TrashPointsToken')->plainTextToken;
@@ -57,22 +58,6 @@ class AuthController extends ApiController
 
         return response()->success(['user' => $user->id, 'token' => $token, 'message' => 'Logged In'], 201);
 
-    }
-
-    public function changePassword(ChangePasswordRequest $request){
-        $input = $request->validated();
-
-        $user = auth()->user();
-
-        if(!Hash::check($input['current_password'],$user->password)){
-            return response()->error("Wrong Password");
-        }
-
-        $user->password = bcrypt($input['new_password']);
-
-        $user->save();
-
-        return response()->success(['message' => "Password Changed"]);
     }
 
     public function logout(Request $request){

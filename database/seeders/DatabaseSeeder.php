@@ -2,7 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\TrashCategory;
+use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -22,5 +23,11 @@ class DatabaseSeeder extends Seeder
             TrashCategorySeeder::class,
             TrashSeeder::class
         ]);
+
+        foreach(Order::all() as $order){
+            $product = Product::inRandomOrder()->take(rand(1,7))->pluck('id');
+            $order->products()->attach($product, ['quantity' => rand(1,5)]);
+        }
+
     }
 }

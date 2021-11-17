@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Order;
 use App\Models\Profile;
 use App\Models\User;
 use App\Models\Wallet;
@@ -19,6 +20,7 @@ class UserSeeder extends Seeder
         User::factory(10)
             ->has(Profile::factory(1))
             ->has(Wallet::factory(1))
+            ->has(Order::factory(2))
             ->create();
     }
 }

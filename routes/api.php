@@ -1,13 +1,18 @@
 <?php
 
 use App\Http\Controllers\api\AuthController;
-use App\Http\Controllers\api\CartUserController;
-use App\Http\Controllers\api\MeController;
-use App\Http\Controllers\api\ProductCategoryController;
-use App\Http\Controllers\api\ProductController;
-use App\Http\Controllers\api\TrashCategoryController;
-use App\Http\Controllers\api\TrashController;
-use App\Http\Controllers\api\UserController;
+use App\Http\Controllers\api\User\CartController;
+use App\Http\Controllers\api\User\ProductCategoryController;
+use App\Http\Controllers\api\User\ProductController;
+use App\Http\Controllers\api\User\TrashCategoryController;
+use App\Http\Controllers\api\User\TrashController;
+use App\Http\Controllers\api\User\UserController;
+use App\Http\Controllers\api\Admin\ProductCategoryController as AdminProductCategoryController;
+use App\Http\Controllers\api\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\api\Admin\TrashCategoryController as AdminTrashCategoryController;
+use App\Http\Controllers\api\Admin\TrashController as AdminTrashController;
+use App\Http\Controllers\api\Admin\UserController as AdminUserController;
+use App\Http\Controllers\api\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\api\UserWalletController;
 use App\Http\Controllers\api\WalletController;
 use App\Models\TrashCategory;
@@ -35,28 +40,55 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::post('/changepassword', [AuthController::class, 'changePassword']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    //current user routes
-    Route::apiResource('/users', UserController::class)->only(['index', 'show', 'update']);
-    Route::apiResource('/me', MeController::class)->only(['index', 'update']);
-    Route::get('/me/getBalance', [MeController::class, 'getBalance']);
-    Route::apiResource('myWallet', WalletController::class)->only(['index']);
 
-    Route::put('/uploadavatar', [MeController::class, 'uploadavatar']);
 
-    //products routes
-    Route::apiResource('/productCategories', ProductCategoryController::class);
-    Route::apiResource('/products', ProductController::class);
+    // User Routes
+    Route::group(['prefix' => '/users'], function(){
 
-    //trash accepted routes
-    Route::apiResource('/trashCategories', TrashCategoryController::class);
-    Route::apiResource('/trashes', TrashController::class);
+        //User Profile Routes
+        Route::get('/', [UserController::class, 'index']);
+        Route::put('/', [UserController::class, 'update']);
+        Route::put('/changepassword', [UserController::class, 'changepassword']);
+        Route::put('/uploadavatar', [UserController::class, 'uploadavatar']);
 
-    //cart routes
-    Route::apiResource('/carts', CartUserController::class);
+        //Cart Routes
+        Route::apiResource('/carts', CartController::class)->only(['index', 'destroy']);
+        Route::post('/addToCart', [CartController::class, 'addToCart']);
+        Route::post('/checkout', [CartController::class, 'checkout']);
 
-    //test
-    Route::post('/addPoints', [UserWalletController::class, 'addPoints']);
-} );
+        //Product Routes
+        Route::apiResource('/productCategories', ProductCategoryController::class)->only(['index']);
+        Route::apiResource('/products', ProductController::class)->only(['index']);
+
+        //Trash Routes
+        Route::apiResource('/trashCategories', TrashCategoryController::class)->only(['index']);;
+        Route::apiResource('/trashes', TrashController::class)->only(['index']);
+
+    });
+
+
+    // Admin Routes
+    Route::group(['middleware' => ['admin'], 'prefix' => '/admin'], function(){
+
+        //Managing Users Routes
+        Route::apiResource('/users', AdminUserController::class)->only(['index', 'show']);
+
+        //Managing Orders Routes
+        Route::apiResource('/orders', AdminOrderController::class)->only(['index', 'show']);
+
+        //Managing Product Routes
+        Route::apiResource('/productCategories', AdminProductCategoryController::class);
+        Route::apiResource('/products', AdminProductController::class);
+
+        //Managing Trash Routes
+        Route::apiResource('/trashCategories', AdminTrashCategoryController::class);
+        Route::apiResource('/trashes', AdminTrashController::class);
+
+        //test
+        Route::post('/addPoints', [UserWalletController::class, 'addPoints']);
+
+    });
+});
 
 //public routes
 Route::post('/register', [AuthController::class, 'register']);

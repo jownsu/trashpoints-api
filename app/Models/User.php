@@ -55,7 +55,8 @@ class User extends Authenticatable
         });
     }
 
-    public function profile(){
+    public function profile()
+    {
         return $this->hasOne(Profile::class);
     }
 
@@ -64,13 +65,29 @@ class User extends Authenticatable
         return $this->hasMany(Cart::class);
     }
 
-    public function wallet(){
+    public function wallet()
+    {
         return $this->hasOne(Wallet::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
     }
 
     //my functions
     public function getBalance()
     {
         return Wallet::select('balance')->where('user_id', $this->id)->get();
+    }
+
+    public function is_admin()
+    {
+        return $this->is_admin;
     }
 }
