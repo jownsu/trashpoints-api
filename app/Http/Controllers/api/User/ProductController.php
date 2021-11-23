@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api\User;
 
 use App\Http\Controllers\api\ApiController;
+use App\Http\Resources\User\Product\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -22,10 +23,10 @@ class ProductController extends ApiController
                 $products->where('name', 'LIKE', '%'. $request->search .'%');
             }
 
-            return response()->success($products->get());
+            return response()->success(new ProductResource($products->get()));
         }
 
-        return response()->success(Product::all());
+        return response()->success(new ProductResource(Product::all()));
     }
 
 }

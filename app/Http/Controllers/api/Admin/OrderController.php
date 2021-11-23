@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\api\Admin;
 
 use App\Http\Controllers\api\ApiController;
-use App\Http\Controllers\Controller;
-use App\Http\Resources\Order\OrderResource;
-use App\Http\Resources\Order\UserOrderResource;
+use App\Http\Resources\Admin\Order\OrderResource;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -36,13 +34,13 @@ class OrderController extends ApiController
         }
 
         if($request->has('per_page') && is_numeric($request->per_page)){
-            $data = UserOrderResource::collection($orders->paginate($request->per_page))
+            $data = OrderResource::collection($orders->paginate($request->per_page))
                 ->response()
                 ->getData(true);
             return response()->successWithPaginate($data);
         }
 
-        return  response()->success( UserOrderResource::collection($orders->get()));
+        return  response()->success( OrderResource::collection($orders->get()));
 
     }
 
@@ -56,29 +54,7 @@ class OrderController extends ApiController
     {
         $order->load(['products', 'user.profile']);
 
-        return response()->success(new UserOrderResource($order));
+        return response()->success(new OrderResource($order));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

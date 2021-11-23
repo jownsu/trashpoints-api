@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api\User;
 
 use App\Http\Controllers\api\ApiController;
+use App\Http\Resources\User\Trash\TrashResource;
 use App\Models\Trash;
 use Illuminate\Http\Request;
 
@@ -22,10 +23,10 @@ class TrashController extends ApiController
                 $trashes->where('name', 'LIKE', '%'. $request->search .'%');
             }
 
-            return response()->success($trashes->get());
+            return response()->success( new TrashResource($trashes->get()) );
         }
 
-        return response()->success(Trash::all());
+        return response()->success( new TrashResource(Trash::all()) );
     }
 
 }

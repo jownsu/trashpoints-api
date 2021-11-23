@@ -15,8 +15,12 @@ class CreateOrderProductTable extends Migration
     {
         Schema::create('order_product', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained();
-            $table->foreignId('product_id')->constrained();
+            $table->foreignId('order_id')->references('id')->on('orders')
+                    ->onUpdate('cascade')
+                    ->onDelete('cascade');
+            $table->foreignId('product_id')->references('id')->on('products')
+                    ->onUpdate('cascade')
+                    ->onDelete('cascade');
             $table->integer('quantity')->default(1);
         });
     }

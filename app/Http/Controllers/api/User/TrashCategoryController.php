@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api\User;
 
 use App\Http\Controllers\api\ApiController;
+use App\Http\Resources\User\Trash\CategoryResource;
 use App\Models\TrashCategory;
 use Illuminate\Http\Request;
 
@@ -20,6 +21,6 @@ class TrashCategoryController extends ApiController
             ? $categories = TrashCategory::where('name','LIKE' ,'%'. $request->search . '%')->get()
             : $categories = TrashCategory::all();
 
-        return response()->success($categories);
+        return response()->success( new CategoryResource($categories));
     }
 }

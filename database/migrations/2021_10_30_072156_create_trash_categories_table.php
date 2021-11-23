@@ -17,6 +17,7 @@ class CreateTrashCategoriesTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('image')->nullable();
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }

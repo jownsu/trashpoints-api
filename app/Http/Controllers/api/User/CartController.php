@@ -5,7 +5,7 @@ namespace App\Http\Controllers\api\User;
 use App\Http\Controllers\api\ApiController;
 use App\Http\Requests\Cart\AddCartRequest;
 use App\Http\Requests\Cart\EditCartRequest;
-use App\Http\Resources\Cart\CartCollection;
+use App\Http\Resources\User\Cart\CartResource;
 use App\Models\Cart;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -21,7 +21,7 @@ class CartController extends ApiController
     public function index()
     {
         $user = auth()->user()->load('carts.products')->only('carts');
-        $data = CartCollection::collection($user['carts']);
+        $data = CartResource::collection($user['carts']);
         return response()->success($data);
     }
 
@@ -46,7 +46,11 @@ class CartController extends ApiController
         $item = auth()->user()->carts()->where('product_id', $request->product_id)->first();
 
         if($item){
-            $item->quantity += $request->quantity;
+            if($request->has('new_quantity') && $request->new_quantity > 0){
+                $item->quantity = $request->new_quantity;
+            }else{
+                $item->quantity += $request->quantity;
+            }
             $item->save();
             return response()->success($item);
         }else{

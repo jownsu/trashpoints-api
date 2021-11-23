@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\User\CartController;
+use App\Http\Controllers\api\User\OrderController;
 use App\Http\Controllers\api\User\ProductCategoryController;
 use App\Http\Controllers\api\User\ProductController;
 use App\Http\Controllers\api\User\TrashCategoryController;
@@ -64,6 +65,8 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
         Route::apiResource('/trashCategories', TrashCategoryController::class)->only(['index']);;
         Route::apiResource('/trashes', TrashController::class)->only(['index']);
 
+        //Order Routes
+        Route::apiResource('/orders', OrderController::class)->only(['index', 'show', 'destroy']);
     });
 
 

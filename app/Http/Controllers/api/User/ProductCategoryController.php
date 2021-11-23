@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api\User;
 
 use App\Http\Controllers\api\ApiController;
+use App\Http\Resources\User\Product\CategoryResource;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 
@@ -19,7 +20,7 @@ class ProductCategoryController extends ApiController
             ? $category = ProductCategory::where('name','LIKE' ,'%'. $request->search . '%')->get()
             : $category = ProductCategory::all();
 
-        return response()->success($category);
+        return response()->success( new CategoryResource($category));
     }
 
 }

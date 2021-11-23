@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Resources\Cart;
+namespace App\Http\Resources\User\Trash;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CartResource extends JsonResource
+class CategoryResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,10 +14,6 @@ class CartResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'id'       => $this->id,
-            'product'  => $this->products()->first(),
-            'quantity' => $this->quantity
-        ];
+        return parent::toArray($request);
     }
 }

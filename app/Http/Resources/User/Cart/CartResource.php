@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Resources\Cart;
+namespace App\Http\Resources\User\Cart;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CartCollection extends JsonResource
+class CartResource extends JsonResource
 {
     /**
-     * Transform the resource collection into an array.
+     * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
