@@ -31,12 +31,18 @@ class Product extends Model
         return self::PRODUCTS_IMG_PATH . '/' . $value;
     }
 
-    public function orders()
+/*    public function orders()
     {
         return $this->hasMany(Order::class);
+    }*/
+
+    public function productCategory()
+    {
+        return $this->belongsTo(ProductCategory::class);
     }
 
-    public function productCategory(){
-        return $this->belongsTo(ProductCategory::class);
+    public function transactions()
+    {
+        return $this->belongsToMany(Transaction::class);
     }
 }

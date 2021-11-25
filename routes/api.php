@@ -5,6 +5,7 @@ use App\Http\Controllers\api\User\CartController;
 use App\Http\Controllers\api\User\OrderController;
 use App\Http\Controllers\api\User\ProductCategoryController;
 use App\Http\Controllers\api\User\ProductController;
+use App\Http\Controllers\api\User\TransactionController;
 use App\Http\Controllers\api\User\TrashCategoryController;
 use App\Http\Controllers\api\User\TrashController;
 use App\Http\Controllers\api\User\UserController;
@@ -14,8 +15,11 @@ use App\Http\Controllers\api\Admin\TrashCategoryController as AdminTrashCategory
 use App\Http\Controllers\api\Admin\TrashController as AdminTrashController;
 use App\Http\Controllers\api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\api\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\api\Admin\CollectController as AdminCollectController;
+use App\Http\Controllers\api\Admin\WalletController as AdminWalletController;
+
+use App\Http\Controllers\api\User\WalletController;
 use App\Http\Controllers\api\UserWalletController;
-use App\Http\Controllers\api\WalletController;
 use App\Models\TrashCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -41,8 +45,6 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::post('/changepassword', [AuthController::class, 'changePassword']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
-
-
     // User Routes
     Route::group(['prefix' => '/users'], function(){
 
@@ -67,6 +69,12 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
 
         //Order Routes
         Route::apiResource('/orders', OrderController::class)->only(['index', 'show', 'destroy']);
+
+        //Transaction Routes
+        Route::apiResource('/transactions', TransactionController::class)->only(['index', 'show']);
+
+        //Wallet Routes
+        Route::apiResource('/wallet', WalletController::class)->only(['index']);
     });
 
 
@@ -78,6 +86,7 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
 
         //Managing Orders Routes
         Route::apiResource('/orders', AdminOrderController::class)->only(['index', 'show']);
+        Route::post('/orders/{order}', [AdminOrderController::class, 'process']);
 
         //Managing Product Routes
         Route::apiResource('/productCategories', AdminProductCategoryController::class);
@@ -87,8 +96,8 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
         Route::apiResource('/trashCategories', AdminTrashCategoryController::class);
         Route::apiResource('/trashes', AdminTrashController::class);
 
-        //test
-        Route::post('/addPoints', [UserWalletController::class, 'addPoints']);
+        //Managing Wallet Routes
+        Route::apiResource('/collect', AdminCollectController::class)->only(['store']);
 
     });
 });

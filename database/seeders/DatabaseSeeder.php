@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
 
         foreach(Order::all() as $order){
             $product = Product::inRandomOrder()->take(rand(1,7))->pluck('id');
-            $order->products()->attach($product, ['quantity' => rand(1,5)]);
+            $order->products()->attach($product, ['quantity' => rand(1,20)]);
         }
 
     }

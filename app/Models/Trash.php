@@ -34,4 +34,9 @@ class Trash extends Model
     {
         return $this->belongsTo(TrashCategory::class);
     }
+
+    public function collects()
+    {
+        return $this->belongsToMany(Collect::class)->withPivot(['quantity']);
+    }
 }

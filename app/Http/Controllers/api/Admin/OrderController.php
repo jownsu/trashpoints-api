@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api\Admin;
 use App\Http\Controllers\api\ApiController;
 use App\Http\Resources\Admin\Order\OrderResource;
 use App\Models\Order;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -55,6 +56,27 @@ class OrderController extends ApiController
         $order->load(['products', 'user.profile']);
 
         return response()->success(new OrderResource($order));
+    }
+
+    public function process(Order $order)
+    {
+        $orders = $order->products;
+
+        $products = [];
+        foreach ($orders as $prod){
+            array_push($products, [
+                'product_id' => $prod->id,
+                'quantity' => $prod->pivot->quantity
+            ]);
+        }
+
+        $transaction = new Transaction(['user_id' => $order->user_id]);
+        if($transaction->save()){
+            $transaction->products()->attach($products);
+            $order->delete();
+        }
+
+        return response()->success($transaction);
     }
 
 }
