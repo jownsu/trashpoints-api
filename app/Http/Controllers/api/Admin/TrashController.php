@@ -51,11 +51,18 @@ class TrashController extends ApiController
 
             $total = $trashes->count();
             $total_pages = ceil($total / $per_page);
+
+            $pages = [];
+
+            for ($i=1; $i <= $total_pages; $i++){
+                array_push($pages, $i);
+            }
+
             $trashes->offset(($page - 1) * $per_page)->limit($per_page);
 
             return response([
                 'data'         => TrashResource::collection($trashes->get()),
-                'total_pages'  => $total_pages,
+                'total_pages'  => $pages,
                 'current_page' => (int) $page,
                 'has_next'     => ($page < $total_pages) ? true : false,
                 'has_prev'     => ($page > 1 ) ? true : false
