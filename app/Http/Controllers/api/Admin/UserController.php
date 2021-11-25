@@ -16,11 +16,24 @@ class UserController extends ApiController
      */
     public function index(Request $request)
     {
-        $request->has('search')
-            ? $users = User::where('email','LIKE' ,'%'. $request->search . '%')->with('profile')->get()
-            : $users = User::with('profile')->get();
+//        $request->has('search')
+//            ? $users = User::where('email','LIKE' ,'%'. $request->search . '%')->with('profile')->get()
+//            : $users = User::with('profile')->get();
 
-        return response()->success($users);
+        $users = User::query()->with('profile');
+
+        if($request->has('search')){
+            $users->where('id', 'LIKE', '%'. $request->search .'%');
+        }
+
+        if($request->has('per_page') && is_numeric($request->per_page)){
+            $data = UserResource::collection($users->paginate($request->per_page))
+                ->response()
+                ->getData(true);
+            return response()->successWithPaginate($data);
+        }
+
+        return response()->success(UserResource::collection($users->get()));
     }
 
     /**

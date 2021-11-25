@@ -24,6 +24,7 @@ class UserResource extends JsonResource
             'address'    => $this->profile->address,
             'contact_no' => $this->profile->contact_no,
             'is_admin'   => $this->is_admin,
+            'balance'    => $this->balance(),
             'avatar'     => $this->profile->avatar
         ];
     }
