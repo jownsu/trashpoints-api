@@ -34,11 +34,31 @@ class OrderController extends ApiController
             }
         }
 
+//        if($request->has('per_page') && is_numeric($request->per_page)){
+//            $data = OrderResource::collection($orders->paginate($request->per_page))
+//                ->response()
+//                ->getData(true);
+//            return response()->successWithPaginate($data);
+//        }
+
         if($request->has('per_page') && is_numeric($request->per_page)){
-            $data = OrderResource::collection($orders->paginate($request->per_page))
-                ->response()
-                ->getData(true);
-            return response()->successWithPaginate($data);
+            $page = ($request->has('page') && is_numeric($request->page))
+                ? $request->page
+                : 1;
+
+            $per_page = $request->per_page;
+
+            $total = $orders->count();
+            $total_pages = ceil($total / $per_page);
+            $orders->offset(($page - 1) * $per_page)->limit($per_page);
+
+            return response([
+                'data'         => OrderResource::collection($orders->get()),
+                'total_pages'  => $total_pages,
+                'current_page' => (int) $page,
+                'has_next'     => ($page < $total_pages) ? true : false,
+                'has_prev'     => ($page > 1 ) ? true : false
+            ]);
         }
 
         return  response()->success( OrderResource::collection($orders->get()));

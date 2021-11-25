@@ -33,11 +33,31 @@ class ProductController extends ApiController
             $products->where('name', 'LIKE', '%'. $request->search .'%');
         }
 
+//        if($request->has('per_page') && is_numeric($request->per_page)){
+//            $data = ProductResource::collection($products->paginate($request->per_page))
+//                ->response()
+//                ->getData(true);
+//            return response()->successWithPaginate($data);
+//        }
+
         if($request->has('per_page') && is_numeric($request->per_page)){
-            $data = ProductResource::collection($products->paginate($request->per_page))
-                ->response()
-                ->getData(true);
-            return response()->successWithPaginate($data);
+            $page = ($request->has('page') && is_numeric($request->page))
+                ? $request->page
+                : 1;
+
+            $per_page = $request->per_page;
+
+            $total = $products->count();
+            $total_pages = ceil($total / $per_page);
+            $products->offset(($page - 1) * $per_page)->limit($per_page);
+
+            return response([
+                'data'         => ProductResource::collection($products->get()),
+                'total_pages'  => $total_pages,
+                'current_page' => (int) $page,
+                'has_next'     => ($page < $total_pages) ? true : false,
+                'has_prev'     => ($page > 1 ) ? true : false
+            ]);
         }
 
         return response()->success(ProductResource::collection($products->get()));
