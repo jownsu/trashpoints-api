@@ -16,6 +16,7 @@ class TrashResource extends JsonResource
     {
         return [
             'id'        =>  $this->id,
+            'smug_id'   => $this->getSmugId(),
             'category'  => $this->trashCategory->name,
             'name'      => $this->name,
             'points'    => $this->points,

@@ -57,6 +57,11 @@ class User extends Authenticatable
         });
     }
 
+    public function getSmugId()
+    {
+        return sprintf('TP-%04d', $this->id);
+    }
+
     public function profile()
     {
         return $this->hasOne(Profile::class);
@@ -91,6 +96,7 @@ class User extends Authenticatable
     {
         return $this->hasManyThrough(CollectTrash::class, Collect::class);
     }
+
 
     //my functions
 /*    public function getBalance()

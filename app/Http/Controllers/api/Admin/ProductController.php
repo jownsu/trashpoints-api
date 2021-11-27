@@ -33,13 +33,6 @@ class ProductController extends ApiController
             $products->where('name', 'LIKE', '%'. $request->search .'%');
         }
 
-//        if($request->has('per_page') && is_numeric($request->per_page)){
-//            $data = ProductResource::collection($products->paginate($request->per_page))
-//                ->response()
-//                ->getData(true);
-//            return response()->successWithPaginate($data);
-//        }
-
         if($request->has('per_page') && is_numeric($request->per_page)){
             $page = ($request->has('page') && is_numeric($request->page))
                 ? $request->page
@@ -60,7 +53,7 @@ class ProductController extends ApiController
 
             return response([
                 'data'         => ProductResource::collection($products->get()),
-                'total_pages'  => $pages,
+                'pages'        => $pages,
                 'current_page' => (int) $page,
                 'has_next'     => ($page < $total_pages) ? true : false,
                 'has_prev'     => ($page > 1 ) ? true : false
@@ -94,7 +87,7 @@ class ProductController extends ApiController
      */
     public function show(Product $product)
     {
-        return response()->success($product);
+        return response()->success(new ProductResource($product));
     }
 
     /**

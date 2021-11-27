@@ -62,7 +62,7 @@ class TrashController extends ApiController
 
             return response([
                 'data'         => TrashResource::collection($trashes->get()),
-                'total_pages'  => $pages,
+                'pages'        => $pages,
                 'current_page' => (int) $page,
                 'has_next'     => ($page < $total_pages) ? true : false,
                 'has_prev'     => ($page > 1 ) ? true : false
@@ -96,7 +96,7 @@ class TrashController extends ApiController
      */
     public function show(Trash $trash)
     {
-        return response()->success($trash);
+        return response()->success(new TrashResource($trash));
     }
 
     /**

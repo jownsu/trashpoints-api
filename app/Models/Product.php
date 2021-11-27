@@ -31,6 +31,11 @@ class Product extends Model
         return self::PRODUCTS_IMG_PATH . '/' . $value;
     }
 
+    public function getSmugId()
+    {
+        return sprintf('P-%04d', $this->id);
+    }
+
 /*    public function orders()
     {
         return $this->hasMany(Order::class);

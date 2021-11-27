@@ -27,6 +27,11 @@ class ProductCategory extends Model
         return self::PRODUCT_CATEGORY_IMG_PATH . '/' . $value;
     }
 
+    public function getSmugId()
+    {
+        return sprintf('PC-%04d', $this->id);
+    }
+
     public function products()
     {
         return $this->hasMany(Product::class);

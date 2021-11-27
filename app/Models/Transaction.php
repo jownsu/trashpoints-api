@@ -13,6 +13,11 @@ class Transaction extends Model
         'user_id',
     ];
 
+    public function getSmugId()
+    {
+        return sprintf('TR-%04d', $this->id);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

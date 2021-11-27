@@ -16,6 +16,7 @@ class TransactionCollection extends JsonResource
     {
         return [
             'id'             => $this->id,
+            'smug_id'       => $this->getSmugId(),
             'total_item'     => $this->products->sum('pivot.quantity'),
             'total_price'    => $this->products->map(function($item){
                                     return $item->price * $item->pivot->quantity;

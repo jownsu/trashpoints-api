@@ -13,6 +13,11 @@ class Order extends Model
         'user_id',
     ];
 
+    public function getSmugId()
+    {
+        return sprintf('OR-%04d', $this->id);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

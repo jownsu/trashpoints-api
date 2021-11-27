@@ -21,9 +21,10 @@ class OrderResource extends JsonResource
 
         return [
             'id'             => $this->id,
+            'smug_id'       => $this->getSmugId(),
             'products'       => ProductResource::collection($this->products),
             'checked_out_at' => $this->created_at->format('m/d/Y'),
-            'total'          => $total_price
+            'total_price'          => $total_price
         ];
     }
 }

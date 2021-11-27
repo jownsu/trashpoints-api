@@ -15,6 +15,11 @@ class Cart extends Model
         'quantity'
     ];
 
+    public function getSmugId()
+    {
+        return sprintf('C-%04d', $this->id);
+    }
+
     public function products()
     {
         return $this->hasMany(Product::class, 'id', 'product_id');

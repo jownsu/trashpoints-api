@@ -29,11 +29,31 @@ class TrashCategoryController extends ApiController
             $categories->where('name', 'LIKE', '%'. $request->search .'%');
         }
 
-        if($request->has('per_page')){
-            $data = CategoryResource::collection($categories->paginate($request->per_page))
-                ->response()
-                ->getData(true);
-            return response()->successWithPaginate($data);
+        if($request->has('per_page') && is_numeric($request->per_page)){
+            $page = ($request->has('page') && is_numeric($request->page))
+                ? $request->page
+                : 1;
+
+            $per_page = $request->per_page;
+
+            $total = $categories->count();
+            $total_pages = ceil($total / $per_page);
+
+            $pages = [];
+
+            for ($i=1; $i <= $total_pages; $i++){
+                array_push($pages, $i);
+            }
+
+            $categories->offset(($page - 1) * $per_page)->limit($per_page);
+
+            return response([
+                'data'         => CategoryResource::collection($categories->get()),
+                'pages'        => $pages,
+                'current_page' => (int) $page,
+                'has_next'     => ($page < $total_pages) ? true : false,
+                'has_prev'     => ($page > 1 ) ? true : false
+            ]);
         }
 
         return response()->success(CategoryResource::collection($categories->get()));
@@ -62,15 +82,10 @@ class TrashCategoryController extends ApiController
      * @return \Illuminate\Http\Response
      */
 
-    public function show($id, Request $request)
+    public function show(TrashCategory $trashCategory)
     {
-        $request->has('search')
-            ? $trashes = Trash::where('trash_category_id', $id)
-            ->where('name', 'LIKE', '%' . $request->search . '%')
-            ->get()
-            : $trashes = Trash::where('trash_category_id', $id)->get();
 
-        return response()->success($trashes);
+        return response()->success(new CategoryResource($trashCategory));
     }
 
     /**

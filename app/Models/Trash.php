@@ -30,6 +30,11 @@ class Trash extends Model
         return self::TRASHES_IMG_PATH . '/' . $value;
     }
 
+    public function getSmugId()
+    {
+        return sprintf('T-%04d', $this->id);
+    }
+
     public function trashCategory()
     {
         return $this->belongsTo(TrashCategory::class);
