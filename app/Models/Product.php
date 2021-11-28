@@ -19,6 +19,8 @@ class Product extends Model
        'image'
    ];
 
+
+
     const PRODUCTS_IMG_PATH = 'products';
 
     public function setImageAttribute($value)
@@ -48,6 +50,6 @@ class Product extends Model
 
     public function transactions()
     {
-        return $this->belongsToMany(Transaction::class);
+        return $this->belongsToMany(Transaction::class)->withPivot(['quantity']);
     }
 }

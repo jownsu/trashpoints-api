@@ -18,6 +18,7 @@ class Trash extends Model
         'image'
     ];
 
+
     const TRASHES_IMG_PATH = 'trashes';
 
     public function setImageAttribute($value)

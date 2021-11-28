@@ -13,6 +13,7 @@ class Collect extends Model
         'user_id'
     ];
 
+
     public function getSmugId()
     {
         return sprintf('CL-%04d', $this->id);
@@ -22,4 +23,8 @@ class Collect extends Model
     {
         return $this->belongsToMany(Trash::class)->withPivot(['quantity']);
     }
+
+    //my functions
+
+
 }

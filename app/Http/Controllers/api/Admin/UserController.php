@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api\Admin;
 
 use App\Http\Controllers\api\ApiController;
 use App\Http\Resources\UserResource;
+use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -16,17 +17,23 @@ class UserController extends ApiController
      */
     public function index(Request $request)
     {
-
-        $users = User::query()->with('profile');
+        $users = User::query()->with(['profile',
+            'collects.trashes' => function($query){
+                $query->select(['points']);
+            },
+            'transactions.products' => function($query){
+                $query->select(['price']);
+            }]);
 
         if($request->has('search')){
-            $users->where('id', 'LIKE', '%'. $request->search .'%');
+            $users->where('id', 'LIKE', '%'. $request->search .'%')
+                ->orWhere('email', 'LIKE', '%'. $request->search .'%');
         }
 
         if($request->has('per_page') && is_numeric($request->per_page)){
             $page = ($request->has('page') && is_numeric($request->page))
-                    ? $request->page
-                    : 1;
+                ? $request->page
+                : 1;
 
             $per_page = $request->per_page;
 
@@ -52,7 +59,6 @@ class UserController extends ApiController
         }
 
         return response()->success(UserResource::collection($users->get()));
-
     }
 
     /**
