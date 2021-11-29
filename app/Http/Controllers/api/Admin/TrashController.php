@@ -27,7 +27,7 @@ class TrashController extends ApiController
         $trashes = Trash::query()->with('trashCategory');
 
 
-        if($request->has('category')){
+        if($request->has('category') && !empty($request->category)){
             $trashes->where('trash_category_id', $request->category);
         }
 

@@ -25,7 +25,7 @@ class ProductController extends ApiController
         $products = Product::query()->with('productCategory');
 
 
-        if($request->has('category')){
+        if($request->has('category')  && !empty($request->category)){
             $products->where('product_category_id', $request->category);
         }
 
