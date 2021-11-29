@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\api\Admin;
 
 use App\Http\Controllers\api\ApiController;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\Admin\User\UserCollection;
+use App\Http\Resources\Admin\User\UserResource;
 use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -17,13 +18,10 @@ class UserController extends ApiController
      */
     public function index(Request $request)
     {
-        $users = User::query()->with(['profile',
-            'collects.trashes' => function($query){
-                $query->select(['points']);
-            },
-            'transactions.products' => function($query){
-                $query->select(['price']);
-            }]);
+
+        //$users = User::join('profiles', 'users.id', '=', 'profiles.user_id');
+
+        $users = User::with('profile');
 
         if($request->has('search')){
             $users->where('id', 'LIKE', '%'. $request->search .'%')
@@ -58,7 +56,8 @@ class UserController extends ApiController
             ]);
         }
 
-        return response()->success(UserResource::collection($users->get()));
+        //return response()->success(UserResource::collection($users->get()));
+        return response()->success(UserCollection::collection($users->get()));
     }
 
     /**
@@ -80,9 +79,7 @@ class UserController extends ApiController
      */
     public function show(User $user)
     {
-        $user = new UserResource($user);
-
-        return response()->success($user);
+        return response()->success(new UserResource($user));
     }
 
     /**
