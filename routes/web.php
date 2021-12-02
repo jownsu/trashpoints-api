@@ -6,7 +6,7 @@ use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
 
 $limiter = config('fortify.limiters.login');
-// = config('fortify.limiters.two-factor');
+//$$twoFactorLimiter = config('fortify.limiters.two-factor');
 //$verificationLimiter = config('fortify.limiters.verification', '6,1');
 
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
