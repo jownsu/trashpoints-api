@@ -5,7 +5,7 @@ namespace App\Http\Controllers\api\Admin;
 use App\Http\Controllers\api\ApiController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TrashCategoryRequest;
-use App\Http\Resources\Admin\ProductResource;
+use App\Http\Resources\Admin\Trash\CategoryListResource;
 use App\Http\Resources\Admin\Trash\CategoryResource;
 use App\Models\Product;
 use App\Models\ProductCategory;
@@ -24,6 +24,12 @@ class TrashCategoryController extends ApiController
     public function index(Request $request)
     {
         $categories = TrashCategory::query();
+
+        if($request->has('filter') && $request->filter == 'true'){
+            return response()->success(
+                CategoryListResource::collection($categories->get())
+                    ->prepend(['id' => 0, 'name' => 'All']));
+        }
 
         if($request->has('search')){
             $categories->where('name', 'LIKE', '%'. $request->search .'%');

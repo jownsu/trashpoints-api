@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api\Admin;
 use App\Http\Controllers\api\ApiController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductCategoryRequest;
+use App\Http\Resources\Admin\Product\CategoryListResource;
 use App\Http\Resources\Admin\Product\CategoryResource;
 use App\Models\Product;
 use App\Models\ProductCategory;
@@ -22,6 +23,12 @@ class ProductCategoryController extends ApiController
     public function index(Request $request)
     {
         $categories = ProductCategory::query();
+
+        if($request->has('filter') && $request->filter == 'true'){
+            return response()->success(
+                CategoryListResource::collection($categories->get())
+                    ->prepend(['id' => 0, 'name' => 'All']));
+        }
 
         if($request->has('search')){
             $categories->where('name', 'LIKE', '%'. $request->search .'%');
