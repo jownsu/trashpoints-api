@@ -8,6 +8,7 @@ use App\Http\Resources\Admin\User\UserResource;
 use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends ApiController
 {

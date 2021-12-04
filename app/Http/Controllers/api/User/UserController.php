@@ -11,6 +11,7 @@ use App\Http\Resources\UserResource;
 use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -47,19 +48,11 @@ class UserController extends ApiController
 
         $userProfile = $user->profile;
 
-        //$userProfile->firstname  = $input['firstname'];
-        //$userProfile->middlename = $input['middlename'];
-        //$userProfile->lastname   = $input['lastname'];
-        //$userProfile->address    = $input['address'];
-        //$userProfile->contact_no = $input['contact_no'];
-
         $userProfile->update($request->validated());
 
         if($user->isDirty()){
             $user->save();
         }
-
-        //$userProfile->save();
 
         return response()->success(new UserResource($user));
     }

@@ -8,8 +8,10 @@ use App\Http\Requests\Cart\EditCartRequest;
 use App\Http\Resources\User\Cart\CartResource;
 use App\Models\Cart;
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CartController extends ApiController
 {
@@ -61,19 +63,24 @@ class CartController extends ApiController
 
     public function checkout()
     {
-        $carts = auth()->user()->carts;
+        $user = auth()->user()->load('carts.products');
+        $wallet = $user->getWallet();
 
-        if(count($carts) <= 0){
-            return response()->error('Your cart is empty');
-        }
+        if(count($user->carts) <= 0) return response()->error('Your cart is empty');
 
         $products = [];
-        foreach($carts as $cart){
+        $total_price = 0;
+        foreach($user->carts as $cart){
+
             array_push($products, [
                 'product_id' => $cart->product_id,
                 'quantity' => $cart->quantity
             ]);
+
+            $total_price += $cart->quantity * $cart->products[0]->price;
         }
+
+        if($total_price > $wallet['balance']) return response()->error('Insufficient Balance');
 
         $order = new Order(['user_id' => auth()->id()]);
         if($order->save()){

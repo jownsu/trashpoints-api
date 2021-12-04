@@ -14,8 +14,10 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
-        $total_earned = $this->totalEarnedPoints();
-        $total_consumed = $this->totalRedeemedPoints();
+        $total_earned = $this->getTotalEarned();
+        $total_spent = $this->getTotalSpent();
+        $total_pending = $this->getTotalPending();
+        $balance = $total_earned - ( $total_spent + $total_pending );
 
         return [
             'id'             => $this->id,
@@ -29,8 +31,9 @@ class UserResource extends JsonResource
             'contact_no'     => $this->profile->contact_no,
             'is_admin'       => $this->is_admin,
             'total_earned'   => $total_earned,
-            'total_consumed' => $total_consumed,
-            'balance'        => $total_earned - $total_consumed,
+            'total_spent'    => $total_spent,
+            'total_pending'  => $total_pending,
+            'balance'        => $balance,
             'avatar'         => $this->profile->avatar,
         ];
     }

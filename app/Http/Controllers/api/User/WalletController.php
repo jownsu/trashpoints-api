@@ -17,7 +17,7 @@ class WalletController extends ApiController
     {
         $user = auth()->user();
 
-        return response()->success($user->balance());
+        return response()->success($user->getWallet());
     }
 
 }

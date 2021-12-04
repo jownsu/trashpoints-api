@@ -4,11 +4,13 @@ namespace App\Models;
 
 use App\Http\Resources\GagoResource;
 use App\Http\Resources\User\WalletResource;
+use App\Traits\UserPointsTracker;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -97,41 +99,58 @@ class User extends Authenticatable
         return $this->hasManyThrough(CollectTrash::class, Collect::class);
     }
 
-
-    //my functions
-/*    public function getBalance()
+    public function getTotalSpent()
     {
-        return Wallet::select('balance')->where('user_id', $this->id)->get();
-    }*/
+        $total = $this->where('user_id', $this->id)
+                    ->select(DB::raw('SUM(product_transaction.quantity * products.price) as total_spent'))
+                    ->join('transactions', 'users.id', '=', 'transactions.user_id')
+                    ->join('product_transaction', 'transactions.id', '=', 'product_transaction.transaction_id')
+                    ->join('products', 'products.id', '=', 'product_transaction.product_id')
+                    ->groupBy('users.id')
+                    ->first();
 
-    public function totalEarnedPoints()
-    {
-        $trashes = $this->load('collects.trashes');
-
-        $trashPoints = $trashes->collects->map(function($collection){
-            return $collection->trashes->map(function($item){
-                return $item->points * $item->pivot->quantity;
-            })->sum();
-        })->sum();
-
-        return $trashPoints;
+        return $total->total_spent ?? 0;
     }
 
-    public function totalRedeemedPoints(){
-        $trashes = $this->load('transactions.products');
+    public function getTotalEarned()
+    {
+        $total = $this->where('user_id', $this->id)
+                    ->select(DB::raw('SUM(collect_trash.quantity * trashes.points) as total_earned'))
+                    ->join('collects', 'users.id', '=', 'collects.user_id')
+                    ->join('collect_trash', 'collects.id', '=', 'collect_trash.collect_id')
+                    ->join('trashes', 'trashes.id', '=', 'collect_trash.trash_id')
+                    ->groupBy('users.id')
+                    ->first();
 
-        $trashPoints = $trashes->transactions->map(function($collection){
-            return $collection->products->map(function($item){
-                return $item->price * $item->pivot->quantity;
-            })->sum();
-        })->sum();
-
-        return $trashPoints;
+        return $total->total_earned ?? 0;
     }
 
-    public function balance()
+    public function getTotalPending()
     {
-        return $this->totalEarnedPoints() - $this->totalRedeemedPoints();
+        $total = $this->where('user_id', $this->id)
+                    ->select(DB::raw('SUM(order_product.quantity * products.price) as total_pending'))
+                    ->join('orders', 'users.id', '=', 'orders.user_id')
+                    ->join('order_product', 'orders.id', '=', 'order_product.order_id')
+                    ->join('products', 'products.id', '=', 'order_product.product_id')
+                    ->groupBy('users.id')
+                    ->first();
+
+        return $total->total_pending ?? 0;
+    }
+
+    public function getWallet()
+    {
+        $total_earned = $this->getTotalEarned();
+        $total_spent = $this->getTotalSpent();
+        $total_pending = $this->getTotalPending();
+        $balance = $total_earned - ( $total_spent + $total_pending );
+
+        return [
+            'total_earned'  => $total_earned,
+            'total_spent'   => $total_spent,
+            'total_pending' => $total_pending,
+            'balance'       => $balance
+        ];
     }
 
     public function is_admin()
