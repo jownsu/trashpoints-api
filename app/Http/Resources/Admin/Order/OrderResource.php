@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Admin\Order;
 
-use App\Http\Resources\Admin\Order\ProductResource;
+use App\Http\Resources\Admin\ProductResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderResource extends JsonResource
@@ -15,10 +15,6 @@ class OrderResource extends JsonResource
      */
     public function toArray($request)
     {
-        $total_price = 0;
-        foreach($this->products as $product){
-            $total_price += $product->price * $product->pivot->quantity;
-        }
 
         return [
             'id'            => $this->id,
@@ -31,7 +27,7 @@ class OrderResource extends JsonResource
             'products'      => ProductResource::collection($this->products),
             'total_item'    => $this->products->sum('pivot.quantity'),
             'total_price'   => $this->products->map(function($item){
-                                    return $item->price * $item->pivot->quantity;
+                                    return $item->pivot->price * $item->pivot->quantity;
                                 })->sum(),
             'checked_out_at' => $this->created_at->format('m/d/Y')
         ];

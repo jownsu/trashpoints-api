@@ -19,7 +19,7 @@ class TransactionCollection extends JsonResource
             'smug_id'       => $this->getSmugId(),
             'total_item'     => $this->products->sum('pivot.quantity'),
             'total_price'    => $this->products->map(function($item){
-                                    return $item->price * $item->pivot->quantity;
+                                    return $item->pivot->price * $item->pivot->quantity;
                                 })->sum(),
             'transtracted_at' => $this->created_at->format('m/d/Y')
         ];

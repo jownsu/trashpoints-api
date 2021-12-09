@@ -19,9 +19,14 @@ class Collect extends Model
         return sprintf('CL-%04d', $this->id);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function trashes()
     {
-        return $this->belongsToMany(Trash::class)->withPivot(['quantity']);
+        return $this->belongsToMany(Trash::class)->withPivot(['quantity', 'points']);
     }
 
     //my functions

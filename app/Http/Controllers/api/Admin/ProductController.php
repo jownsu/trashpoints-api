@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api\Admin;
 use App\Http\Controllers\api\ApiController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
+use App\Http\Resources\Admin\Product\CategoryListResource;
 use App\Http\Resources\Admin\Product\ProductResource;
 use App\Http\Resources\Admin\TrashResource;
 use App\Models\Product;
@@ -24,10 +25,17 @@ class ProductController extends ApiController
     {
         $products = Product::query()->with('productCategory');
 
-
         if($request->has('category')  && !empty($request->category)){
             $products->where('product_category_id', $request->category);
         }
+
+        if($request->has('filter') && $request->filter == 'true'){
+            return response()->success(
+                CategoryListResource::collection($products->get())
+                    ->prepend(['id' => 0, 'name' => 'All']));
+        }
+
+
 
         if($request->has('search')){
             $products->where('name', 'LIKE', '%'. $request->search .'%');
@@ -76,7 +84,7 @@ class ProductController extends ApiController
             $product->image = $request->image->store(Product::PRODUCTS_IMG_PATH);
         }
         $product->save();
-        return response()->success($product);
+        return response()->success(new ProductResource($product));
     }
 
     /**

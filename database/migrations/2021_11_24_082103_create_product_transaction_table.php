@@ -22,6 +22,7 @@ class CreateProductTransactionTable extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->integer('quantity')->default(1);
+            $table->float('price')->default(1.00);
 
             $table->timestamps();
         });

@@ -43,6 +43,6 @@ class Trash extends Model
 
     public function collects()
     {
-        return $this->belongsToMany(Collect::class)->withPivot(['quantity']);
+        return $this->belongsToMany(Collect::class)->withPivot(['quantity', 'points']);
     }
 }

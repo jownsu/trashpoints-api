@@ -78,7 +78,7 @@ class TrashCategoryController extends ApiController
             $category->image = $request->image->store(TrashCategory::TRASH_CATEGORY_IMG_PATH);
         }
         $category->save();
-        return response()->success($category);
+        return response()->success(new CategoryResource($category));
     }
 
     /**

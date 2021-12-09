@@ -26,7 +26,7 @@ class TrashRequest extends FormRequest
         return [
             'trash_category_id' => ['required'],
             'name'              => ['required'],
-            'points'            => ['required', 'numeric'],
+            'points'            => ['required', 'numeric', 'max:10000'],
             'unit'              => ['required'],
             'image'             => ['nullable' ,'image'],
         ];

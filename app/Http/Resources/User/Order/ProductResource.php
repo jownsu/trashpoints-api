@@ -21,7 +21,7 @@ class ProductResource extends JsonResource
             'price'       => $this->price,
             'image'       => $this->image,
             'quantity'    => $this->pivot->quantity,
-            'total_price' => $this->price * $this->pivot->quantity
+            'total_price' => $this->pivot->price * $this->pivot->quantity
         ];
     }
 }

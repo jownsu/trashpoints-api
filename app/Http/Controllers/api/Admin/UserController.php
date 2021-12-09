@@ -105,4 +105,11 @@ class UserController extends ApiController
     {
         //
     }
+
+    public function total()
+    {
+        $total = User::all()->count();
+
+        return response()->success(['total_users' => $total]);
+    }
 }

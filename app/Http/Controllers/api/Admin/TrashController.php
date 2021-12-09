@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\TrashCategoryRequest;
 use App\Http\Requests\TrashRequest;
 use App\Http\Resources\Admin\ProductResource;
+use App\Http\Resources\Admin\Trash\CategoryListResource;
 use App\Http\Resources\Admin\Trash\TrashResource;
 use App\Models\ProductCategory;
 use App\Models\Trash;
@@ -29,6 +30,12 @@ class TrashController extends ApiController
 
         if($request->has('category') && !empty($request->category)){
             $trashes->where('trash_category_id', $request->category);
+        }
+
+        if($request->has('filter') && $request->filter == 'true'){
+            return response()->success(
+                CategoryListResource::collection($trashes->get())
+                    ->prepend(['id' => 0, 'name' => 'All']));
         }
 
         if($request->has('search')){
@@ -85,7 +92,7 @@ class TrashController extends ApiController
             $trash->image = $request->image->store(Trash::TRASHES_IMG_PATH);
         }
         $trash->save();
-        return response()->success($trash);
+        return response()->success(new TrashResource($trash));
     }
 
     /**

@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends ApiController
 {
@@ -87,7 +88,8 @@ class OrderController extends ApiController
         foreach ($orders as $prod){
             array_push($products, [
                 'product_id' => $prod->id,
-                'quantity' => $prod->pivot->quantity
+                'quantity' => $prod->pivot->quantity,
+                'price' => $prod->pivot->price
             ]);
         }
 
@@ -98,6 +100,11 @@ class OrderController extends ApiController
         }
 
         return response()->success($transaction);
+    }
+
+    public function total()
+    {
+        return response()->success($this->pivotTotal('order_product', 'total_pending_points', 'price'));
     }
 
 }

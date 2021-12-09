@@ -16,17 +16,19 @@ class ProductController extends ApiController
      */
     public function index(Request $request)
     {
+        $products = Product::query()->with('productCategory');
+
         if($request->has('category')){
-            $products = Product::where('product_category_id', $request->category);
+            $products = $products->where('product_category_id', $request->category);
 
             if($request->has('search')){
                 $products->where('name', 'LIKE', '%'. $request->search .'%');
             }
 
-            return response()->success(new ProductResource($products->get()));
+            return response()->success( ProductResource::collection($products->get()));
         }
 
-        return response()->success(new ProductResource(Product::all()));
+        return response()->success( ProductResource::collection(Product::all()));
     }
 
 }

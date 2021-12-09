@@ -102,10 +102,9 @@ class User extends Authenticatable
     public function getTotalSpent()
     {
         $total = $this->where('user_id', $this->id)
-                    ->select(DB::raw('SUM(product_transaction.quantity * products.price) as total_spent'))
+                    ->select(DB::raw('SUM(product_transaction.quantity * product_transaction.price) as total_spent'))
                     ->join('transactions', 'users.id', '=', 'transactions.user_id')
                     ->join('product_transaction', 'transactions.id', '=', 'product_transaction.transaction_id')
-                    ->join('products', 'products.id', '=', 'product_transaction.product_id')
                     ->groupBy('users.id')
                     ->first();
 
@@ -115,10 +114,9 @@ class User extends Authenticatable
     public function getTotalEarned()
     {
         $total = $this->where('user_id', $this->id)
-                    ->select(DB::raw('SUM(collect_trash.quantity * trashes.points) as total_earned'))
+                    ->select(DB::raw('SUM(collect_trash.quantity * collect_trash.points) as total_earned'))
                     ->join('collects', 'users.id', '=', 'collects.user_id')
                     ->join('collect_trash', 'collects.id', '=', 'collect_trash.collect_id')
-                    ->join('trashes', 'trashes.id', '=', 'collect_trash.trash_id')
                     ->groupBy('users.id')
                     ->first();
 
@@ -128,10 +126,9 @@ class User extends Authenticatable
     public function getTotalPending()
     {
         $total = $this->where('user_id', $this->id)
-                    ->select(DB::raw('SUM(order_product.quantity * products.price) as total_pending'))
+                    ->select(DB::raw('SUM(order_product.quantity * order_product.price) as total_pending'))
                     ->join('orders', 'users.id', '=', 'orders.user_id')
                     ->join('order_product', 'orders.id', '=', 'order_product.order_id')
-                    ->join('products', 'products.id', '=', 'order_product.product_id')
                     ->groupBy('users.id')
                     ->first();
 

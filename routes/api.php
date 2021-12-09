@@ -16,9 +16,11 @@ use App\Http\Controllers\api\Admin\TrashController as AdminTrashController;
 use App\Http\Controllers\api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\api\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\api\Admin\CollectController as AdminCollectController;
+use App\Http\Controllers\api\Admin\TransactionController as AdminTransactionController;
 use App\Http\Controllers\api\Admin\WalletController as AdminWalletController;
 
 use App\Http\Controllers\api\User\WalletController;
+use App\Http\Controllers\api\User\CollectController;
 use App\Http\Controllers\api\UserWalletController;
 use App\Models\TrashCategory;
 use Illuminate\Http\Request;
@@ -73,6 +75,9 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
         //Transaction Routes
         Route::apiResource('/transactions', TransactionController::class)->only(['index', 'show']);
 
+        //Collect Routes
+        Route::apiResource('/collects', CollectController::class)->only(['index', 'show']);
+
         //Wallet Routes
         Route::apiResource('/wallet', WalletController::class)->only(['index']);
     });
@@ -82,9 +87,11 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::group(['middleware' => ['admin'], 'prefix' => '/admin'], function(){
 
         //Managing Users Routes
+        Route::get('/users/total', [AdminUserController::class, 'total']);
         Route::apiResource('/users', AdminUserController::class)->only(['index', 'show']);
 
         //Managing Orders Routes
+        Route::get('/orders/total', [AdminOrderController::class, 'total']);
         Route::apiResource('/orders', AdminOrderController::class)->only(['index', 'show']);
         Route::post('/orders/{order}', [AdminOrderController::class, 'process']);
 
@@ -96,8 +103,16 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
         Route::apiResource('/trashCategories', AdminTrashCategoryController::class);
         Route::apiResource('/trashes', AdminTrashController::class);
 
+        //Managing Transaction Routes
+        Route::get('/transactions/total', [AdminTransactionController::class, 'total']);
+        Route::apiResource('/transactions', AdminTransactionController::class)->only(['index', 'show']);
+
+        //Managing Collect Routes
+        Route::get('/collects/total', [AdminCollectController::class, 'total']);
+        Route::apiResource('/collects', AdminCollectController::class)->only(['store', 'index', 'show']);
+
         //Managing Wallet Routes
-        Route::apiResource('/collect', AdminCollectController::class)->only(['store']);
+        //Route::apiResource('/collect', AdminCollectController::class)->only(['store']);
 
     });
 });

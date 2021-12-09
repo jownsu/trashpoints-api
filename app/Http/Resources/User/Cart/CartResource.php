@@ -16,7 +16,7 @@ class CartResource extends JsonResource
     {
         return [
             'id'       => $this->id,
-            'smug_id'       => $this->getSmugId(),
+            'smug_id'  => $this->getSmugId(),
             'products' => $this->products->first()->only(['id', 'name', 'description', 'information', 'price', 'image']),
             'quantity' => $this->quantity
         ];

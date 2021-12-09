@@ -25,7 +25,7 @@ class OrderCollection extends JsonResource
             'user_avatar'   => $this->user->profile->avatar,
             'total_item'    => $this->products->sum('pivot.quantity'),
             'total_price'   => $this->products->map(function($item){
-                                return $item->price * $item->pivot->quantity;
+                                return $item->pivot->price * $item->pivot->quantity;
                             })->sum(),
             'checked_out_at' => $this->created_at->format('m/d/Y')
         ];

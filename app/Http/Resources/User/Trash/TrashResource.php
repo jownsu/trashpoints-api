@@ -14,6 +14,14 @@ class TrashResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id'        =>  $this->id,
+            'smug_id'   => $this->getSmugId(),
+            'category'  => $this->trashCategory->name,
+            'name'      => $this->name,
+            'points'    => $this->points,
+            'unit'      => $this->unit,
+            'image'     => $this->image,
+        ];
     }
 }

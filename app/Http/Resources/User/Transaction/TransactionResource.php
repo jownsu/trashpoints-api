@@ -22,7 +22,7 @@ class TransactionResource extends JsonResource
 
         return [
             'id'              => $this->id,
-            'smug_id'       => $this->getSmugId(),
+            'smug_id'         => $this->getSmugId(),
             'products'        => ProductResource::collection($this->products),
             'transtracted_at' => $this->created_at->format('m/d/Y'),
             'total'           => $total_price

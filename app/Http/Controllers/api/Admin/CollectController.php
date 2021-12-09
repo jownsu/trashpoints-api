@@ -4,9 +4,14 @@ namespace App\Http\Controllers\api\Admin;
 
 use App\Http\Controllers\api\ApiController;
 use App\Http\Requests\StoreCollectRequest;
+use App\Http\Resources\Admin\Collect\CollectCollection;
+use App\Http\Resources\Admin\Collect\CollectResource;
 use App\Models\Collect;
+use App\Models\Trash;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 class CollectController extends ApiController
 {
@@ -15,9 +20,52 @@ class CollectController extends ApiController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $collects = Collect::with(['user.profile']);
+
+        if($request->has('search')){
+            if(is_numeric($request->search)){
+                $collects->whereHas('user', function($query) use($request){
+                    $query->where('id', 'LIKE', '%' . $request->search . '%');
+                });
+            }else{
+                $collects->whereHas('user.profile', function($query) use($request){
+                    $query->where('firstname', 'LIKE', '%' . $request->search . '%')
+                        ->orWhere('middlename', 'LIKE', '%' . $request->search . '%')
+                        ->orWhere('lastname', 'LIKE', '%' . $request->search . '%');
+                });
+            }
+        }
+
+        if($request->has('per_page') && is_numeric($request->per_page)){
+            $page = ($request->has('page') && is_numeric($request->page))
+                ? $request->page
+                : 1;
+
+            $per_page = $request->per_page;
+
+            $total = $collects->count();
+            $total_pages = ceil($total / $per_page);
+
+            $pages = [];
+
+            for ($i=1; $i <= $total_pages; $i++){
+                array_push($pages, $i);
+            }
+
+            $collects->offset(($page - 1) * $per_page)->limit($per_page);
+
+            return response([
+                'data'         => CollectCollection::collection($collects->get()),
+                'pages'        => $pages,
+                'current_page' => (int) $page,
+                'has_next'     => ($page < $total_pages) ? true : false,
+                'has_prev'     => ($page > 1 ) ? true : false
+            ]);
+        }
+
+        return  response()->success( CollectCollection::collection($collects->get()));
     }
 
     /**
@@ -28,20 +76,37 @@ class CollectController extends ApiController
      */
     public function store(StoreCollectRequest $request)
     {
-        $input = $request->validated();
-        $userId = $input['user_id'];
 
-        if(!User::where('id', $userId)->exists()){
+        $trashIds = Arr::pluck($request->trashes, 'trash_id');
+        $trashes = Trash::select('id as trash_id', 'points')->findOrFail($trashIds)->toArray();
+        $resultSet = array_merge($trashes, $request->trashes);
+
+        $collects_arr = [];
+
+        foreach ($resultSet as $record) {
+            $key = $record['trash_id'];
+            if (array_key_exists($key, $collects_arr)) {
+                $collects_arr[$key] = array_merge($collects_arr[$key], $record);
+            }else{
+                $collects_arr[$key] = $record;
+            }
+        }
+
+        if(!User::where('id', $request->user_id)->exists()){
             return response()->error('User not found');
         }
 
-        $collect = new Collect(['user_id' => $userId]);
+        $collect = new Collect(['user_id' => $request->user_id]);
 
         if($collect->save()){
-            $collect->trashes()->attach($input['trashes']);
+            $collect->trashes()->attach(array_values($collects_arr));
         }
 
-        return response()->success($collect);
+        $total = $collect->trashes->map(function($item){
+            return $item->pivot->points * $item->pivot->quantity;
+        })->sum();
+
+        return response()->success($total);
     }
 
     /**
@@ -50,9 +115,11 @@ class CollectController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Collect $collect)
     {
-        //
+        $collect->load(['trashes', 'user.profile']);
+
+        return response()->success(new CollectResource($collect));
     }
 
     /**
@@ -76,5 +143,10 @@ class CollectController extends ApiController
     public function destroy($id)
     {
         //
+    }
+
+    public function total()
+    {
+        return response()->success($this->pivotTotal('collect_trash', 'total_distributed_points', 'points'));
     }
 }

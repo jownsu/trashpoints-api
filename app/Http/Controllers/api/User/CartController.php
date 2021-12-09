@@ -74,7 +74,8 @@ class CartController extends ApiController
 
             array_push($products, [
                 'product_id' => $cart->product_id,
-                'quantity' => $cart->quantity
+                'quantity' => $cart->quantity,
+                'price' => $cart->products[0]->price
             ]);
 
             $total_price += $cart->quantity * $cart->products[0]->price;
