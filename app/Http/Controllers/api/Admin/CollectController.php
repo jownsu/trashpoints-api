@@ -39,30 +39,15 @@ class CollectController extends ApiController
         }
 
         if($request->has('per_page') && is_numeric($request->per_page)){
-            $page = ($request->has('page') && is_numeric($request->page))
-                ? $request->page
-                : 1;
-
-            $per_page = $request->per_page;
 
             $total = $collects->count();
-            $total_pages = ceil($total / $per_page);
+            $paginationData = $this->paginate($total);
 
-            $pages = [];
+            $collects->offset(($paginationData['current_page'] - 1) * $paginationData['per_page'])
+                     ->limit($paginationData['per_page']);
 
-            for ($i=1; $i <= $total_pages; $i++){
-                array_push($pages, $i);
-            }
-
-            $collects->offset(($page - 1) * $per_page)->limit($per_page);
-
-            return response([
-                'data'         => CollectCollection::collection($collects->get()),
-                'pages'        => $pages,
-                'current_page' => (int) $page,
-                'has_next'     => ($page < $total_pages) ? true : false,
-                'has_prev'     => ($page > 1 ) ? true : false
-            ]);
+            $data = CollectCollection::collection($collects->get());
+            return response()->successWithPaginate($data, $paginationData);
         }
 
         return  response()->success( CollectCollection::collection($collects->get()));

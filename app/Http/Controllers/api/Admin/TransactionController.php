@@ -34,30 +34,15 @@ class TransactionController extends ApiController
         }
 
         if($request->has('per_page') && is_numeric($request->per_page)){
-            $page = ($request->has('page') && is_numeric($request->page))
-                ? $request->page
-                : 1;
-
-            $per_page = $request->per_page;
 
             $total = $transactions->count();
-            $total_pages = ceil($total / $per_page);
+            $paginationData = $this->paginate($total);
 
-            $pages = [];
+            $transactions->offset(($paginationData['current_page'] - 1) * $paginationData['per_page'])
+                         ->limit($paginationData['per_page']);
 
-            for ($i=1; $i <= $total_pages; $i++){
-                array_push($pages, $i);
-            }
-
-            $transactions->offset(($page - 1) * $per_page)->limit($per_page);
-
-            return response([
-                'data'         => TransactionCollection::collection($transactions->get()),
-                'pages'        => $pages,
-                'current_page' => (int) $page,
-                'has_next'     => ($page < $total_pages) ? true : false,
-                'has_prev'     => ($page > 1 ) ? true : false
-            ]);
+            $data = TransactionCollection::collection($transactions->get());
+            return response()->successWithPaginate($data, $paginationData);
         }
 
         return  response()->success( TransactionCollection::collection($transactions->get()));

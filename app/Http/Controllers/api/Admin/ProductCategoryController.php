@@ -35,30 +35,17 @@ class ProductCategoryController extends ApiController
         }
 
         if($request->has('per_page') && is_numeric($request->per_page)){
-            $page = ($request->has('page') && is_numeric($request->page))
-                ? $request->page
-                : 1;
-
-            $per_page = $request->per_page;
 
             $total = $categories->count();
-            $total_pages = ceil($total / $per_page);
 
-            $pages = [];
+            $paginationData = $this->paginate($total);
 
-            for ($i=1; $i <= $total_pages; $i++){
-                array_push($pages, $i);
-            }
+            $categories->offset(($paginationData['current_page'] - 1) * $paginationData['per_page'])
+                       ->limit($paginationData['per_page']);
 
-            $categories->offset(($page - 1) * $per_page)->limit($per_page);
+            $data = CategoryResource::collection($categories->get());
 
-            return response([
-                'data'         => CategoryResource::collection($categories->get()),
-                'pages'        => $pages,
-                'current_page' => (int) $page,
-                'has_next'     => ($page < $total_pages) ? true : false,
-                'has_prev'     => ($page > 1 ) ? true : false
-            ]);
+            return response()->successWithPaginate($data, $paginationData);
         }
 
         return response()->success(CategoryResource::collection($categories->get()));

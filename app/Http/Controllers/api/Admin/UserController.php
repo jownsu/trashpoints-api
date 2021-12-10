@@ -19,7 +19,6 @@ class UserController extends ApiController
      */
     public function index(Request $request)
     {
-
         //$users = User::join('profiles', 'users.id', '=', 'profiles.user_id');
 
         $users = User::with('profile');
@@ -30,31 +29,15 @@ class UserController extends ApiController
         }
 
         if($request->has('per_page') && is_numeric($request->per_page)){
-            $page = ($request->has('page') && is_numeric($request->page))
-                ? $request->page
-                : 1;
-
-            $per_page = $request->per_page;
 
             $total = $users->count();
-            $total_pages = ceil($total / $per_page);
+            $paginationData = $this->paginate($total);
 
-            $pages = [];
+            $users->offset(($paginationData['current_page'] - 1) * $paginationData['per_page'])
+                  ->limit($paginationData['per_page']);
 
-            for ($i=1; $i <= $total_pages; $i++){
-                array_push($pages, $i);
-            }
-
-
-            $users->offset(($page - 1) * $per_page)->limit($per_page);
-
-            return response([
-                'data'         => UserResource::collection($users->get()),
-                'pages'        => $pages,
-                'current_page' => (int) $page,
-                'has_next'     => ($page < $total_pages) ? true : false,
-                'has_prev'     => ($page > 1 ) ? true : false
-            ]);
+            $data = UserResource::collection($users->get());
+            return response()->successWithPaginate($data, $paginationData);
         }
 
         //return response()->success(UserResource::collection($users->get()));

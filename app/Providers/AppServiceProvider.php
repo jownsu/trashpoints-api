@@ -35,12 +35,14 @@ class AppServiceProvider extends ServiceProvider
             ], $status_code);
         });
 
-        Response::macro('successWithPaginate', function($data, $status_code = 200){
+        Response::macro('successWithPaginate', function($data, $paginateData, $status_code = 200){
             return response()->json([
-                'success' => true,
-                'data'    => $data['data'],
-                'links'   => $data['links'],
-                'meta'    => $data['meta'],
+                'success'       => true,
+                'data'          => $data,
+                'pages'         => $paginateData['pages'],
+                'current_page'  => $paginateData['current_page'],
+                'has_next'      => $paginateData['has_next'],
+                'has_prev'      => $paginateData['has_prev'],
             ], $status_code);
         });
 
