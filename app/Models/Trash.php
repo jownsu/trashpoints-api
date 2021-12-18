@@ -19,7 +19,7 @@ class Trash extends Model
     ];
 
 
-    const TRASHES_IMG_PATH = 'img/trashes';
+    const TRASHES_IMG_PATH = 'trashes';
 
     public function setImageAttribute($value)
     {
@@ -28,8 +28,8 @@ class Trash extends Model
 
     public function getImageAttribute($value)
     {
-        return file_exists(public_path(self::TRASHES_IMG_PATH . '/' . $value)) && !empty($value)
-            ? url(self::TRASHES_IMG_PATH . '/' . $value)
+        return file_exists(public_path('img/' . self::TRASHES_IMG_PATH . '/' . $value)) && !empty($value)
+            ? url('img/' . self::TRASHES_IMG_PATH . '/' . $value)
             : url('img/tp-logo.png');
     }
 

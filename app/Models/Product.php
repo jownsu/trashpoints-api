@@ -21,7 +21,7 @@ class Product extends Model
 
 
 
-    const PRODUCTS_IMG_PATH = 'img/products';
+    const PRODUCTS_IMG_PATH = 'products';
 
     public function setImageAttribute($value)
     {
@@ -30,8 +30,8 @@ class Product extends Model
 
     public function getImageAttribute($value)
     {
-        return file_exists(public_path(self::PRODUCTS_IMG_PATH . '/' . $value)) && !empty($value)
-            ? url(self::PRODUCTS_IMG_PATH . '/' . $value)
+        return file_exists(public_path('img/' . self::PRODUCTS_IMG_PATH . '/' . $value)) && !empty($value)
+            ? url('img/' . self::PRODUCTS_IMG_PATH . '/' . $value)
             : url('img/tp-logo.png');
     }
 
