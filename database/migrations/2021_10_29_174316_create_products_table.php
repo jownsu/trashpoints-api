@@ -19,8 +19,7 @@ class CreateProductsTable extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->string('name');
-            $table->string('description')->nullable();
-            $table->integer('quantity')->default(0);
+            $table->text('description')->nullable();
             $table->float('price');
             $table->string('image')->nullable();
             $table->timestamps();

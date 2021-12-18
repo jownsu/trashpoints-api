@@ -19,7 +19,7 @@ class Profile extends Model
         'avatar'
     ];
 
-    const AVATARS_IMG_PATH = 'avatar';
+    const AVATARS_IMG_PATH = 'img/avatar';
 
     public function setAvatarAttribute($value)
     {
@@ -28,9 +28,9 @@ class Profile extends Model
 
     public function getAvatarAttribute($value)
     {
-        if($value){
-            return self::AVATARS_IMG_PATH . '/' . $value;
-        }
+        return file_exists(public_path(self::AVATARS_IMG_PATH . '/' . $value)) && !empty($value)
+            ? url(self::AVATARS_IMG_PATH . '/' . $value)
+            : url('img/tp-avatar.jpg');
     }
 
     public function user(){

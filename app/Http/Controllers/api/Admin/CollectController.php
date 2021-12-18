@@ -62,6 +62,10 @@ class CollectController extends ApiController
     public function store(StoreCollectRequest $request)
     {
 
+        if(!User::where('id', $request->user_id)->exists()){
+            return response()->error('User not found');
+        }
+
         $trashIds = Arr::pluck($request->trashes, 'trash_id');
         $trashes = Trash::select('id as trash_id', 'points')->findOrFail($trashIds)->toArray();
         $resultSet = array_merge($trashes, $request->trashes);
@@ -75,10 +79,6 @@ class CollectController extends ApiController
             }else{
                 $collects_arr[$key] = $record;
             }
-        }
-
-        if(!User::where('id', $request->user_id)->exists()){
-            return response()->error('User not found');
         }
 
         $collect = new Collect(['user_id' => $request->user_id]);

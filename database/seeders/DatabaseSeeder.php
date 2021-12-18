@@ -28,21 +28,21 @@ class DatabaseSeeder extends Seeder
         ]);
 
         foreach(Order::all() as $order){
-            $products = Product::inRandomOrder()->take(rand(1,3))->get(['id', 'price']);
+            $products = Product::inRandomOrder()->take(rand(1,2))->get(['id', 'price']);
             foreach ($products as $product){
                 $order->products()->attach($product->id, ['quantity' => rand(1,10), 'price' => $product->price]);
             }
         }
 
         foreach(Collect::all() as $collect){
-            $trashes = Trash::inRandomOrder()->take(rand(4,7))->get(['id', 'points']);
+            $trashes = Trash::inRandomOrder()->take(rand(7, 12))->get(['id', 'points']);
             foreach($trashes as $trash){
-                $collect->trashes()->attach($trash->id, ['quantity' => rand(10,30), 'points' => $trash->points]);
+                $collect->trashes()->attach($trash->id, ['quantity' => rand(100,300), 'points' => $trash->points]);
             }
         }
 
         foreach(Transaction::all() as $transaction){
-            $products = Product::inRandomOrder()->take(rand(1,3))->get(['id', 'price']);
+            $products = Product::inRandomOrder()->take(rand(1,2))->get(['id', 'price']);
             foreach ($products as $product){
                 $transaction->products()->attach($product->id, ['quantity' => rand(10,30), 'price' => $product->price]);
             }

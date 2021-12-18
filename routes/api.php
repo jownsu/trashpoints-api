@@ -25,6 +25,7 @@ use App\Http\Controllers\api\UserWalletController;
 use App\Models\TrashCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,11 +42,34 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 
+//public routes
+Route::post('/token/register', [AuthController::class, 'register']);
+Route::post('/token/login', [AuthController::class, 'login']);
+
+$limiter = config('fortify.limiters.login');
+//$$twoFactorLimiter = config('fortify.limiters.two-factor');
+//$verificationLimiter = config('fortify.limiters.verification', '6,1');
+
+Route::post('/login', [AuthenticatedSessionController::class, 'store'])
+    ->middleware(array_filter([
+        'guest:'.config('fortify.guard'),
+        $limiter ? 'throttle:'.$limiter : null,
+    ]));
+
+
+
+
 Route::group(['middleware' => ['auth:sanctum']], function(){
 
     //authentication routes
-    Route::post('/changepassword', [AuthController::class, 'changePassword']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+
+    //web
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+        ->name('logout');
+
+    //mobile
+    Route::post('/token/changepassword', [AuthController::class, 'changePassword']);
+    Route::post('/token/logout', [AuthController::class, 'logout']);
 
     // User Routes
     Route::group(['prefix' => '/users'], function(){
@@ -117,7 +141,4 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     });
 });
 
-//public routes
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
 

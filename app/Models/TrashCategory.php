@@ -15,7 +15,7 @@ class TrashCategory extends Model
         'image'
     ];
 
-    const TRASH_CATEGORY_IMG_PATH = 'trash_categories';
+    const TRASH_CATEGORY_IMG_PATH = 'img/trash_categories';
 
     public function setImageAttribute($value)
     {
@@ -24,7 +24,9 @@ class TrashCategory extends Model
 
     public function getImageAttribute($value)
     {
-        return self::TRASH_CATEGORY_IMG_PATH . '/' . $value;
+        return file_exists(public_path(self::TRASH_CATEGORY_IMG_PATH . '/' . $value)) && !empty($value)
+            ? url(self::TRASH_CATEGORY_IMG_PATH . '/' . $value)
+            : url('img/tp-logo.png');
     }
 
     public function getSmugId()

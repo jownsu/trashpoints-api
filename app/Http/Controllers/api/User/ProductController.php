@@ -18,17 +18,17 @@ class ProductController extends ApiController
     {
         $products = Product::query()->with('productCategory');
 
-        if($request->has('category')){
+        if($request->has('category') && !empty($request->category)){
             $products = $products->where('product_category_id', $request->category);
-
-            if($request->has('search')){
-                $products->where('name', 'LIKE', '%'. $request->search .'%');
-            }
-
-            return response()->success( ProductResource::collection($products->get()));
         }
 
-        return response()->success( ProductResource::collection(Product::all()));
+        if($request->has('search')){
+            $products->where('name', 'LIKE', '%'. $request->search .'%');
+        }
+
+        return response()->success( ProductResource::collection($products->get()));
+
+        //return response()->success( ProductResource::collection(Product::all()));
     }
 
 }

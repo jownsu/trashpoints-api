@@ -25,7 +25,7 @@ class ProductController extends ApiController
     {
         $products = Product::query()->with('productCategory');
 
-        if($request->has('category')  && !empty($request->category)){
+        if($request->has('category') && !empty($request->category)){
             $products->where('product_category_id', $request->category);
         }
 
@@ -34,8 +34,6 @@ class ProductController extends ApiController
                 CategoryListResource::collection($products->get())
                     ->prepend(['id' => 0, 'name' => 'All']));
         }
-
-
 
         if($request->has('search')){
             $products->where('name', 'LIKE', '%'. $request->search .'%');

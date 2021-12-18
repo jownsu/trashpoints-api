@@ -15,7 +15,7 @@ class ProductCategory extends Model
         'image'
     ];
 
-    const PRODUCT_CATEGORY_IMG_PATH = 'product_categories';
+    const PRODUCT_CATEGORY_IMG_PATH = 'img/product_categories';
 
     public function setImageAttribute($value)
     {
@@ -24,7 +24,9 @@ class ProductCategory extends Model
 
     public function getImageAttribute($value)
     {
-        return self::PRODUCT_CATEGORY_IMG_PATH . '/' . $value;
+        return file_exists(public_path(self::PRODUCT_CATEGORY_IMG_PATH . '/' . $value)) && !empty($value)
+            ? url(self::PRODUCT_CATEGORY_IMG_PATH . '/' . $value)
+            : url('img/tp-logo.png');
     }
 
     public function getSmugId()
