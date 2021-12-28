@@ -44,6 +44,8 @@ class TransactionController extends ApiController
         if(!$this->isOwnedByUser('view', $transaction)){
             return response()->error('This transaction is not owned by user');
         }
+
+        // $this->authorize('view', Transaction::class);
         $transaction->load('products');
 
         //return response()->success(new OrderResource($order));

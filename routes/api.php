@@ -1,73 +1,28 @@
 <?php
 
-use App\Http\Controllers\api\AuthController;
-use App\Http\Controllers\api\User\CartController;
-use App\Http\Controllers\api\User\OrderController;
-use App\Http\Controllers\api\User\ProductCategoryController;
-use App\Http\Controllers\api\User\ProductController;
-use App\Http\Controllers\api\User\TransactionController;
-use App\Http\Controllers\api\User\TrashCategoryController;
-use App\Http\Controllers\api\User\TrashController;
-use App\Http\Controllers\api\User\UserController;
-use App\Http\Controllers\api\Admin\ProductCategoryController as AdminProductCategoryController;
-use App\Http\Controllers\api\Admin\ProductController as AdminProductController;
-use App\Http\Controllers\api\Admin\TrashCategoryController as AdminTrashCategoryController;
-use App\Http\Controllers\api\Admin\TrashController as AdminTrashController;
-use App\Http\Controllers\api\Admin\UserController as AdminUserController;
-use App\Http\Controllers\api\Admin\OrderController as AdminOrderController;
-use App\Http\Controllers\api\Admin\CollectController as AdminCollectController;
-use App\Http\Controllers\api\Admin\TransactionController as AdminTransactionController;
-use App\Http\Controllers\api\Admin\WalletController as AdminWalletController;
-
-use App\Http\Controllers\api\User\WalletController;
-use App\Http\Controllers\api\User\CollectController;
-use App\Http\Controllers\api\UserWalletController;
-use App\Models\TrashCategory;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
+use App\Http\Controllers\api\AuthController;
+use App\Http\Controllers\api\User\{
+    CartController,
+    OrderController,
+    ProductCategoryController,
+    ProductController,
+    TransactionController,
+    TrashCategoryController,
+    TrashController,
+    UserController,
+    WalletController,
+    CollectController
+};
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-
-//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//    return $request->user();
-//});
 
 //public routes
 Route::post('/token/register', [AuthController::class, 'register']);
 Route::post('/token/login', [AuthController::class, 'login']);
 
-$limiter = config('fortify.limiters.login');
-//$$twoFactorLimiter = config('fortify.limiters.two-factor');
-//$verificationLimiter = config('fortify.limiters.verification', '6,1');
-
-Route::post('/login', [AuthenticatedSessionController::class, 'store'])
-    ->middleware(array_filter([
-        'guest:'.config('fortify.guard'),
-        $limiter ? 'throttle:'.$limiter : null,
-    ]));
-
-
-
-
 Route::group(['middleware' => ['auth:sanctum']], function(){
 
     //authentication routes
-
-    //web
-    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
-        ->name('logout');
-
-    //mobile
     Route::post('/token/changepassword', [AuthController::class, 'changePassword']);
     Route::post('/token/logout', [AuthController::class, 'logout']);
 
@@ -104,40 +59,6 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
 
         //Wallet Routes
         Route::apiResource('/wallet', WalletController::class)->only(['index']);
-    });
-
-
-    // Admin Routes
-    Route::group(['middleware' => ['admin'], 'prefix' => '/admin'], function(){
-
-        //Managing Users Routes
-        Route::get('/users/total', [AdminUserController::class, 'total']);
-        Route::apiResource('/users', AdminUserController::class)->only(['index', 'show']);
-
-        //Managing Orders Routes
-        Route::get('/orders/total', [AdminOrderController::class, 'total']);
-        Route::apiResource('/orders', AdminOrderController::class)->only(['index', 'show']);
-        Route::post('/orders/{order}', [AdminOrderController::class, 'process']);
-
-        //Managing Product Routes
-        Route::apiResource('/productCategories', AdminProductCategoryController::class);
-        Route::apiResource('/products', AdminProductController::class);
-
-        //Managing Trash Routes
-        Route::apiResource('/trashCategories', AdminTrashCategoryController::class);
-        Route::apiResource('/trashes', AdminTrashController::class);
-
-        //Managing Transaction Routes
-        Route::get('/transactions/total', [AdminTransactionController::class, 'total']);
-        Route::apiResource('/transactions', AdminTransactionController::class)->only(['index', 'show']);
-
-        //Managing Collect Routes
-        Route::get('/collects/total', [AdminCollectController::class, 'total']);
-        Route::apiResource('/collects', AdminCollectController::class)->only(['store', 'index', 'show']);
-
-        //Managing Wallet Routes
-        //Route::apiResource('/collect', AdminCollectController::class)->only(['store']);
-
     });
 });
 

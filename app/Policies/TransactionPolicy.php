@@ -31,7 +31,7 @@ class TransactionPolicy
     public function view(User $user, Transaction $transaction)
     {
         return $user->id === $transaction->user_id;
-    }
+    }  
 
     /**
      * Determine whether the user can create models.
