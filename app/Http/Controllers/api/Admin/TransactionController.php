@@ -66,8 +66,12 @@ class TransactionController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Transaction $transaction)
+    public function show($id)
     {
+
+        $origId = ltrim(ltrim($id, 'TR-'), '0') ;
+        $transaction = Transaction::findOrFail($origId);
+
         $transaction->load(['products', 'user.profile']);
 
         return response()->success(new TransactionResource($transaction));

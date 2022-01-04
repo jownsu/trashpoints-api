@@ -58,8 +58,11 @@ class OrderController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Order $order)
+    public function show($id)
     {
+        $origId = ltrim(ltrim($id, 'OR-'), '0') ;
+
+        $order = Order::findOrFail($origId);
         $order->load(['products', 'user.profile']);
 
         return response()->success(new OrderResource($order));
