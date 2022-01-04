@@ -15,13 +15,14 @@ class TrashResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'        =>  $this->id,
-            'smug_id'   => $this->getSmugId(),
-            'category'  => $this->trashCategory->name,
-            'name'      => $this->name,
-            'points'    => $this->points,
-            'unit'      => $this->unit,
-            'image'     => $this->image,
+            'id'          =>  $this->id,
+            'smug_id'     => $this->getSmugId(),
+            'category_id' => $this->trashCategory->id,
+            'category'    => $this->trashCategory->name,
+            'name'        => $this->name,
+            'points'      => $this->points,
+            'unit'        => $this->unit,
+            'image'       => $this->image,
         ];
     }
 }
