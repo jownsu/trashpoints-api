@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
         Route::apiResource('/users', UserController::class)->only(['index', 'show']);
 
         //Managing Orders Routes
+        Route::get('/orders/todayOrderCount', [OrderController::class, 'todayOrderCount']);
         Route::get('/orders/total', [OrderController::class, 'total']);
         Route::apiResource('/orders', OrderController::class)->only(['index', 'show']);
         Route::post('/orders/{order}', [OrderController::class, 'process']);

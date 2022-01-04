@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class OrderController extends ApiController
@@ -66,6 +67,13 @@ class OrderController extends ApiController
         $order->load(['products', 'user.profile']);
 
         return response()->success(new OrderResource($order));
+    }
+
+    public function todayOrderCount()
+    {
+        $order = Order::whereDate('created_at', Carbon::today())->count();
+
+        return $order;
     }
 
     public function process(Order $order)
