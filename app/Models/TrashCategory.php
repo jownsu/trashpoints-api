@@ -12,7 +12,8 @@ class TrashCategory extends Model
 
     protected $fillable = [
         'name',
-        'image'
+        'image',
+        'description'
     ];
 
     const TRASH_CATEGORY_IMG_PATH = 'trash_categories';

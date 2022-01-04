@@ -24,9 +24,9 @@ class TrashCategoryRequest extends FormRequest
     public function rules()
     {
         return [
-            "name" => ['required'],
-            "description" => ['required'],
-            "image" => ['nullable' ,'image'],
+            "name"          => ['required'],
+            "description"   => ['required'],
+            "image"         => ['nullable' ,'image'],
         ];
     }
 }
