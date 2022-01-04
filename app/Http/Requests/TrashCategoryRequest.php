@@ -25,6 +25,7 @@ class TrashCategoryRequest extends FormRequest
     {
         return [
             "name" => ['required'],
+            "description" => ['required'],
             "image" => ['nullable' ,'image'],
         ];
     }
